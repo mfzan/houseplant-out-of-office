@@ -58,6 +58,14 @@ def main():
     # itself: it is provided by the grader and may not be ours to change.
     os.chmod(target, 0o644)
 
+    # Read the file back and re-check it: a write or encoding problem
+    # must fail loudly here instead of shipping a bad entry.
+    with open(target, "r", encoding="utf-8", newline="\n") as handle:
+        written = handle.read()
+    if written != line + "\n":
+        raise SystemExit("entry.txt round-trip mismatch: %r" % written)
+    check_entry(written.rstrip("\n"))
+
     print("wrote %s (%d characters)" % (target, len(line)))
     return 0
 
